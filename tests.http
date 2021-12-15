@@ -1,0 +1,132 @@
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "arun",
+  "password":"messi"
+}
+###
+GET http://localahost:3000/api/vi/auth/
+
+###
+GET http://localhost:3000/api/v1/epics
+# Authorization: 1
+# Authorization: Basic YXJ1bjp3aG9uZWVkcw==
+
+###
+
+POST http://localhost:3000/api/v1/epics
+Content-Type: application/json
+# Authorization:arun_whoneeds
+
+{
+  "name": "stuant api"
+}
+
+###
+
+PUT http://localhost:3000/api/v1/epics/7
+Content-Type: application/json
+# Authorization: 1
+
+{
+  "name": "Epic changed"
+}
+
+###
+
+DELETE http://localhost:3000/api/v1/epics/2
+
+
+
+###
+
+GET http://localhost:3000/api/v1/categories
+# Authorization: 1
+
+###
+
+GET http://localhost:3000/api/v1/categories/16
+# Authorization: 3
+
+###
+
+POST http://localhost:3000/api/v1/categories
+Content-Type: application/json
+# Authorization: 2
+
+{
+  "name": "checking",
+  "epic_id": 8
+}
+
+###
+
+PUT http://localhost:3000/api/v1/categories/7
+Content-Type: application/json
+# Authorization: 1
+
+{
+  "name": "is it ",
+  
+}
+
+###
+
+DELETE http://localhost:3000/api/v1/categories/8
+
+###
+
+POST http://localhost:3000/api/v1/items
+Content-Type: application/json
+
+{
+  "name": "Item 1",
+  "category_id": "7",
+}
+
+###
+
+GET http://localhost:3000/api/v1/items
+
+###
+
+GET http://localhost:3000/api/v1/items?epic_id=2
+
+###
+
+GET http://localhost:3000/api/v1/items/1 
+
+###
+
+PUT http://localhost:3000/api/v1/items/1
+Content-Type: application/json
+
+{
+  ""
+  "category_id": 1
+}
+###
+
+DELETE http://localhost:3000/api/v1/items/2
+
+###
+
+POST http://localhost:3000/api/v1/auth/register
+Content-Type: application/json
+
+{
+  "username": "arun",
+  "password":"messi"
+}
+
+###
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "username": "arun",
+  "password":"messi"
+}
+
+###
