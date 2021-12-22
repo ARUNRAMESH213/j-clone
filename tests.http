@@ -1,8 +1,8 @@
-POST http://localhost:3000/api/v1/auth/login
+POST http://localhost:3000/api/v1/auth/token
 Content-Type: application/json
 
 {
-  "username": "arun",
+  "username": "lionel",
   "password":"messi"
 }
 ###
@@ -10,8 +10,7 @@ GET http://localahost:3000/api/vi/auth/
 
 ###
 GET http://localhost:3000/api/v1/epics
-# Authorization: 1
-# Authorization: Basic YXJ1bjp3aG9uZWVkcw==
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjQsImlhdCI6MTY0MDE3MzA3NSwiZXhwIjoxNjQwMTc2Njc1fQ.xuRwzZDtPkO5HNjrTspso2PDZsrBdlh1xXrqNLYtikE
 
 ###
 

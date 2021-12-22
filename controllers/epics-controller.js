@@ -6,15 +6,16 @@ const epicsService = require("../services/epics-service");
 const {
   authorizeRequest,
   authenticateUser,
+  jwtAuthentication,
   isLoggedIn,
   isOwnerOfEpic,
 } = require("../middleware/auth");
 
-router.get("/", authenticateUser, isLoggedIn, async (req, res) => {
+router.get("/", authenticateUser, jwtAuthentication ,isLoggedIn,async (req, res) => {
   res.send(await epicsService.getAllEpics(req.user));
 });
 
-router.post("/", authenticateUser,isLoggedIn, async (req, res) => {
+router.post("/", authenticateUser,jwtAuthentication,isLoggedIn, async (req, res) => {
   try {
     const newEpic = await epicsService.createEpic(req.body.name, req.user);
     res.status(201).send(newEpic);
@@ -43,7 +44,7 @@ router.get("/:id",authenticateUser, isLoggedIn,isOwnerOfEpic, async (req, res) =
   }
 });
 
-router.put("/:id", authenticateUser, isLoggedIn,isOwnerOfEpic, async (req, res) => {
+router.put("/:id", authenticateUser, jwtAuthentication , isLoggedIn,isOwnerOfEpic, async (req, res) => {
   const updatedEpic = await epicsService.updateEpic(
     Number(req.params.id),
     req.body.name

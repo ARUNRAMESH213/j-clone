@@ -1,8 +1,9 @@
-const { default: knex } = require("knex");
-const { use } = require("../controllers/epics-controller");
+
 const db = require("../db");
-const { getAllEpics } = require("../services/epics-service");
-const { getCategoryById } = require("../services/categories-service");
+const jwt=require("jsonwebtoken");
+
+
+
 
 function authorizeRequest(req, res, next) {
   if (req.headers.authorization) {
@@ -18,7 +19,7 @@ function authorizeRequest(req, res, next) {
 async function basicAuthenticateUser(req, res, next) {
   const userInfo = req.headers.authorization;
 
-  if (!userInfo) {
+  if (!userInfo || !userInfo.startsWith("Basic") ) {
     return next();
   }
   const credentials = userInfo.split(" ")[1];
@@ -48,7 +49,7 @@ async function isLoggedIn(req, res, next) {
     return;
   }
   // res.setHead(er401,{"www.authenticate":"Basic"})
-  res.status(401).send({ message: "Unauthorize" });
+  res.status(401).send({ message: "Unauthorized" });
 }
 
 async function isOwnerOfEpic(req, res, next) {
@@ -139,11 +140,44 @@ async function isOwnerOfItem(req,res,next) {
 //   // res.status(401).send({ message: "Unauthorized1" });
 // }
 
+
+async function jwtAuthentication(req,res,next)
+{  const authHeader=req.headers.authorization;
+  if(authHeader && authHeader.startsWith("Bearer")){
+    const token=authHeader.split(" ")[1];
+  
+  if(token){
+    try{
+    const decoded=jwt.verify(token,"secret")
+    const user=await db("users")
+    .select()
+    .where({id:decoded.userId})
+    .first();
+    console.log("user(((()))))))))))))",user)
+    if(user){
+      req.user=user;
+      next();
+      console.log("user(((()))))))))))))",user)
+      return;
+    }
+  }
+  catch(err){
+
+    console.log("%%%%%%%%---------",err)
+    res.status(401).send({message:"invalid token provided"});
+    return;
+  }
+}
+  }
+next();
+
+}
 module.exports = {
   authorizeRequest,
   authenticateUser: basicAuthenticateUser,
   isLoggedIn,
   isOwnerOfEpic,
   isOwnerOfCategory,
-  isOwnerOfItem
-};
+  isOwnerOfItem,
+  jwtAuthentication,
+}
