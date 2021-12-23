@@ -144,20 +144,23 @@ async function isOwnerOfItem(req,res,next) {
 async function jwtAuthentication(req,res,next)
 {  const authHeader=req.headers.authorization;
   if(authHeader && authHeader.startsWith("Bearer")){
-    const token=authHeader.split(" ")[1];
+    const token=authHeader.split(" ")[1]
+
+    console.log("0000------ token",token)
   
   if(token){
     try{
     const decoded=jwt.verify(token,"secret")
+    console.log("0000------ decoded",decoded) 
     const user=await db("users")
     .select()
     .where({id:decoded.userId})
     .first();
-    console.log("user(((()))))))))))))",user)
+    console.log("user(((())))))))))))) user",user)
     if(user){
       req.user=user;
       next();
-      console.log("user(((()))))))))))))",user)
+      console.log("user(((())))))))))))) req.user",req.user)
       return;
     }
   }
