@@ -48,6 +48,7 @@ router.post("/token",async(req,res)=>{
 
   if(user){
     const token=jwt.sign({userId:user.id},"secret",{expiresIn:"1h"})
+    req.session.user=user;
     res.send({message:"logged in successfully",token});
   }else{
     res.status(401).send({message:"invalid username or password"})

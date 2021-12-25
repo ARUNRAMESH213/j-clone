@@ -36,6 +36,10 @@ app.use("/api/v1/categories", categoriesRouter);
 app.use("/api/v1/items", itemsRouter);
 app.use("/api/v1/auth", usersRouter);
 
+app.get("/files/:filename", (req, res) => {
+  res.sendFile( __dirname+ "/uploads" + req.params.filename);
+});
+
 app.get("/hello", (req, res) => {
   if (req.session.count) {
     req.session.count++;
@@ -43,11 +47,6 @@ app.get("/hello", (req, res) => {
     req.session.count = 1;
   }
   res.send({ message: "world", count: req.session.count });
-
-
-
-
-
 });
 
 app.listen(3000);

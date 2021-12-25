@@ -45,7 +45,7 @@ async function isLoggedIn(req, res, next) {
   req.user = req.user || req.session.user;
   if (req.user) {
     next();
-    // console.log("nkhbkv",req.user);
+     console.log("log in",req.user);
     return;
   }
   // res.setHead(er401,{"www.authenticate":"Basic"})
@@ -142,7 +142,12 @@ async function isOwnerOfItem(req,res,next) {
 
 
 async function jwtAuthentication(req,res,next)
-{  const authHeader=req.headers.authorization;
+{  
+  const authHeader=req.headers.authorization;
+  if(!authHeader){
+    next()
+    return;
+  }
   if(authHeader && authHeader.startsWith("Bearer")){
     const token=authHeader.split(" ")[1]
 

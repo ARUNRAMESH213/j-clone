@@ -2,6 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 const epicsService = require("../services/epics-service");
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" });
 // const {getAllEpics}=require("../services/epics-service")
 const {
   authorizeRequest,
@@ -11,67 +13,115 @@ const {
   isOwnerOfEpic,
 } = require("../middleware/auth");
 
-router.get("/", authenticateUser, jwtAuthentication ,isLoggedIn,async (req, res) => {
+router.get("/", jwtAuthentication, isLoggedIn, async (req, res) => {
   res.send(await epicsService.getAllEpics(req.user));
 });
 
-router.post("/", authenticateUser,jwtAuthentication,isLoggedIn, async (req, res) => {
-  try {
-    const newEpic = await epicsService.createEpic(req.body.name, req.user);
-    res.status(201).send(newEpic);
-  } catch (err) {
-    if (err.errno === 19) {
-      res.status(400).send({
-        error: "Epic name already exists",
-      });
+router.post(
+  "/",
+  authenticateUser,
+  jwtAuthentication,
+  isLoggedIn,
+  async (req, res) => {
+    try {
+      const newEpic = await epicsService.createEpic(req.body.name, req.user);
+      res.status(201).send(newEpic);
+    } catch (err) {
+      if (err.errno === 19) {
+        res.status(400).send({
+          error: "Epic name already exists",
+        });
+      } else {
+        console.error(err);
+        res.status(500).send({
+          message: "Internal server error",
+        });
+      }
+    }
+  }
+);
+
+router.get(
+  "/:id",
+  authenticateUser,
+  isLoggedIn,
+  isOwnerOfEpic,
+  async (req, res) => {
+    const epic = await epicsService.getEpicById(Number(req.params.id));
+    if (epic) {
+      res.send(epic);
     } else {
-      console.error(err);
-      res.status(500).send({
-        message: "Internal server error",
+      res.status(404).send({
+        message: "Epic not found",
       });
     }
   }
-});
+);
 
-router.get("/:id",authenticateUser, isLoggedIn,isOwnerOfEpic, async (req, res) => {
-  const epic = await epicsService.getEpicById(Number(req.params.id));
-  if (epic) {
-    res.send(epic);
-  } else {
-    res.status(404).send({
-      message: "Epic not found",
-    });
+router.put(
+  "/:id",
+  authenticateUser,
+  isLoggedIn,
+  isOwnerOfEpic,
+  async (req, res) => {
+    const updatedEpic = await epicsService.updateEpic(
+      Number(req.params.id),
+      req.body.name
+    );
+
+    if (!updatedEpic) {
+      res.status(404).send({
+        message: "Epic not found",
+      });
+      return;
+    }
+
+    res.send(updatedEpic);
   }
-});
+);
 
-router.put("/:id", authenticateUser, jwtAuthentication , isLoggedIn,isOwnerOfEpic, async (req, res) => {
-  const updatedEpic = await epicsService.updateEpic(
-    Number(req.params.id),
-    req.body.name
-  );
+router.delete(
+  "/:id",
+  authenticateUser,
+  isLoggedIn,
+  isOwnerOfEpic,
+  async (req, res) => {
+    const deletedEpic = await epicsService.deleteEpic(Number(req.params.id));
 
-  if (!updatedEpic) {
-    res.status(404).send({
-      message: "Epic not found",
-    });
-    return;
+    if (!deletedEpic) {
+      res.status(404).send({
+        message: "Epic not found",
+      });
+      return;
+    }
+
+    // res.status(204).send();
+    res.send(deletedEpic);
   }
+);
 
-  res.send(updatedEpic);
-});
+router.put(
+  "/:id/upload",
+  jwtAuthentication,
+  isLoggedIn,
+  upload.single("epicFile"),
+  async (req, res) => {
+    console.log(req.file);
+    res.send("ok");
+    // const updatedEpic = await epicsService.updateEpic(
+    //   Number(req.params.id),
+    //   req.body.name
+    // );
 
-router.delete("/:id",authenticateUser, isLoggedIn,isOwnerOfEpic, async (req, res) => {
-  const deletedEpic = await epicsService.deleteEpic(Number(req.params.id));
+    // if (!updatedEpic) {
+    //   res.status(404).send({
+    //     message: "Epic not found",
+    //   });
+    //   return;
+    // }
 
-  if (!deletedEpic) {
-    res.status(404).send({
-      message: "Epic not found",
-    });
-    return;
+    // res.send(updatedEpic);
   }
-
-  // res.status(204).send();
-  res.send(deletedEpic);
-});
+);
 
 module.exports = router;

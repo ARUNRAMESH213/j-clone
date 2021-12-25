@@ -104,7 +104,7 @@ async function updateEpic(id, epicName) {
   }
 
   await knex("epics")
-    .update({ name: epicName, updated_at: new Date() })
+    .update({ ...epicName, updated_at: new Date() })
     .where("id", id);
 
   return getEpicById(id);
